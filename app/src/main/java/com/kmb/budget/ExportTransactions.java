@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -52,14 +53,19 @@ public class ExportTransactions extends AppCompatActivity implements
         db.setCaller(me);
         db.execute();
 
+        ActivityCompat.requestPermissions((Activity) context,
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions((Activity) context,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            Log.e("permission","not has permission");
 
         }else{
             permissionFlag = 1;
+            Log.e("permission","has permission");
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -93,7 +99,9 @@ public class ExportTransactions extends AppCompatActivity implements
     public static void createExcel(List<Transaction> list) {
 
         if(permissionFlag!=1){
+            Log.e("Exit","Cannot not enter");
             return;
+
         }
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
